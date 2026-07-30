@@ -76,7 +76,7 @@ function ProductContent() {
         <div className="mb-6">
           <input 
             type="text" 
-            placeholder="🔍 찾으시는 꿀템을 검색해보세요!" 
+            placeholder="🔍 상품명 또는 숫자로 바로 찾으세요..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full p-4 bg-slate-800 border border-slate-600 rounded-xl text-white focus:border-orange-500 focus:outline-none placeholder-slate-500 shadow-sm transition-all"
