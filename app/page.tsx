@@ -19,6 +19,7 @@ function ProductContent() {
       try {
         const querySnapshot = await getDocs(collection(db, "products"));
         const data = querySnapshot.docs.map(doc => ({ ...doc.data() }));
+        data.sort((a: any, b: any) => (b.updatedAt || 0) - (a.updatedAt || 0));
         setProducts(data);
         setIsLoading(false);
       } catch (err) {

@@ -6,19 +6,16 @@ import { signInWithEmailAndPassword, onAuthStateChanged, signOut, updatePassword
 import { db, auth } from '../firebase'; 
 
 export default function AdminPage() {
-  // --- 인증 관련 State ---
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [user, setUser] = useState<any>(null); 
 
-  // --- 상품 관리 관련 State ---
   const [products, setProducts] = useState<any[]>([]);
   const [fetchTrigger, setFetchTrigger] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   
-  // 🚨 [복구 및 고도화 완료] 최근 ID 상태 관리
   const [lastId, setLastId] = useState<number>(0);
   
   const [formData, setFormData] = useState({
@@ -38,12 +35,17 @@ export default function AdminPage() {
       try {
         const querySnapshot = await getDocs(collection(db, "products"));
         const data = querySnapshot.docs.map(doc => ({ ...doc.data() }));
+        
+        // 🚨 [핵심 고도화] updatedAt(수정 시간) 기준으로 최신순(내림차순) 정렬!
+        // 옛날 데이터(updatedAt이 없는 경우)는 0으로 처리해 아래로 내립니다.
+        data.sort((a: any, b: any) => (b.updatedAt || 0) - (a.updatedAt || 0));
+        
         setProducts(data);
 
-        // 🚨 [해커식 고도화 로직] ID에 영어가 섞여 있어도 숫자만 뽑아내서 가장 큰 값을 찾습니다.
+        // 숫자 ID 추출 로직 (가장 큰 ID 찾기)
         if (data.length > 0) {
           const maxId = Math.max(...data.map(p => {
-            const numOnly = String(p.id).replace(/[^0-9]/g, ''); // 숫자만 추출
+            const numOnly = String(p.id).replace(/[^0-9]/g, '');
             return numOnly ? Number(numOnly) : 0;
           }));
           setLastId(maxId);
@@ -100,9 +102,17 @@ export default function AdminPage() {
     e.preventDefault();
     try {
       const safeId = formData.id.trim();
-      const dataToSave = { ...formData, id: safeId };
+      
+      // 🚨 [핵심 고도화] 상품을 저장/수정할 때 '현재 시간(Date.now())'을 도장 찍어줍니다!
+      const dataToSave = { 
+        ...formData, 
+        id: safeId,
+        updatedAt: Date.now() 
+      };
+      
       await setDoc(doc(db, "products", safeId), dataToSave);
-      alert(`🎉 [${dataToSave.name}] 상품 정보가 저장되었습니다!`);
+      alert(`🎉 [${dataToSave.name}] 상품 정보가 저장/수정되었습니다!`);
+      
       setFormData({ id: '', name: '', category: '', price: '', originalPrice: '', imageUrl: '', affiliateLink: '' });
       setIsEditing(false); 
       setFetchTrigger(!fetchTrigger); 
@@ -137,7 +147,7 @@ export default function AdminPage() {
 
   const fillTestData = () => {
     setFormData({
-      id: `temu_${String(lastId + 1).padStart(3, '0')}`, // 🚨 자동입력 시에도 권장 ID가 들어가도록 센스 추가!
+      id: `temu_${String(lastId + 1).padStart(3, '0')}`, 
       name: '[미친 수압] 호텔식 샤워기 헤드', category: '욕실용품',
       price: '4,500원', originalPrice: '18,000원',
       imageUrl: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=400&q=80',
@@ -199,7 +209,6 @@ export default function AdminPage() {
         </button>
       </div>
       
-      {/* 🚨 복구된 최신 등록 ID 안내 패널 */}
       <div className="bg-blue-900/20 p-4 rounded-xl border border-blue-500/30 mb-6 flex items-center gap-4">
         <span className="text-3xl">💡</span>
         <div>
