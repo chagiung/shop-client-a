@@ -37,7 +37,7 @@ export default function AdminPage() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === 'hacker123') { 
+    if (password === '@11223344@') { 
       setIsAuthenticated(true);
     } else {
       alert('비밀번호가 틀렸습니다!');
@@ -115,11 +115,13 @@ export default function AdminPage() {
     });
   };
 
-  // 🚨 [고도화 포인트 2] 검색어에 따라 실시간으로 상품 목록을 걸러주는 필터 로직
-  const filteredProducts = products.filter(product =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.id.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // 🚨 [고도화 포인트 2 - 무적 방패 적용] 불량 데이터가 있어도 절대 에러 나지 않음!
+  const filteredProducts = products.filter(product => {
+    const safeName = product.name || "";
+    const safeId = product.id || "";
+    return safeName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+           safeId.toLowerCase().includes(searchTerm.toLowerCase());
+  });
 
   if (!isAuthenticated) {
     return (
