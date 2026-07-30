@@ -234,7 +234,7 @@ export default function AdminPage() {
       <div className="mb-6">
         <input 
           type="text" 
-          placeholder="🔍 상품명 또는 고유 ID를 입력해 바로 찾으세요..." 
+          placeholder="🔍 상품명 또는 번호로 바로 찾으세요!"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full p-4 bg-slate-800 border border-slate-600 rounded-xl text-white focus:border-orange-500 focus:outline-none placeholder-slate-500 shadow-sm transition-all"
