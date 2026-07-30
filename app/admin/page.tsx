@@ -11,7 +11,9 @@ export default function AdminPage() {
 
   const fetchProducts = async () => {
     const querySnapshot = await getDocs(collection(db, "products"));
-    const data = querySnapshot.docs.map(doc => ({ firebaseId: doc.id, ...doc.data() }));
+    
+    // 🚨 깐깐한 에러 해결: data 변수에 any[] (프리패스 마패)를 달아줍니다!
+    const data: any[] = querySnapshot.docs.map(doc => ({ firebaseId: doc.id, ...doc.data() }));
     
     data.sort((a, b) => Number(b.id) - Number(a.id));
     setProducts(data);
