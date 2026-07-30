@@ -49,7 +49,6 @@ function ProductContent() {
     : products.filter((p) => p.id !== heroProduct?.id);
 
   return (
-    {/* 🚨 전체 배경을 밝은 회색(gray-50)과 텍스트를 진한 회색(gray-900)으로 변경 */}
     <div className="max-w-md mx-auto min-h-screen bg-gray-50 pb-20 text-gray-900 font-sans shadow-2xl">
       <header className="bg-white text-center py-4 font-extrabold tracking-wide border-b border-gray-200 shadow-sm text-gray-800">
         ⚡ TODAY HOT DEAL ⚡
@@ -73,7 +72,6 @@ function ProductContent() {
 
       <section className="p-5">
         <div className="mb-6">
-          {/* 🚨 검색창도 하얀 배경에 포커스 시 오렌지색 테두리가 빛나도록 수정 */}
           <input 
             type="text" 
             placeholder="🔍 찾으시는 꿀템을 검색해보세요!" 
