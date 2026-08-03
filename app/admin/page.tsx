@@ -36,13 +36,10 @@ export default function AdminPage() {
         const querySnapshot = await getDocs(collection(db, "products"));
         const data = querySnapshot.docs.map(doc => ({ ...doc.data() }));
         
-        // 🚨 [핵심 고도화] updatedAt(수정 시간) 기준으로 최신순(내림차순) 정렬!
-        // 옛날 데이터(updatedAt이 없는 경우)는 0으로 처리해 아래로 내립니다.
         data.sort((a: any, b: any) => (b.updatedAt || 0) - (a.updatedAt || 0));
         
         setProducts(data);
 
-        // 숫자 ID 추출 로직 (가장 큰 ID 찾기)
         if (data.length > 0) {
           const maxId = Math.max(...data.map(p => {
             const numOnly = String(p.id).replace(/[^0-9]/g, '');
@@ -103,7 +100,6 @@ export default function AdminPage() {
     try {
       const safeId = formData.id.trim();
       
-      // 🚨 [핵심 고도화] 상품을 저장/수정할 때 '현재 시간(Date.now())'을 도장 찍어줍니다!
       const dataToSave = { 
         ...formData, 
         id: safeId,
@@ -282,14 +278,6 @@ export default function AdminPage() {
             {searchTerm ? '검색어와 일치하는 상품이 없습니다. 🥲' : '등록된 상품이 없습니다.'}
           </div>
         )}
-      </div>
-
-      <div className="border-b border-slate-700 pb-4 mb-6 mt-10">
-        <h2 className="text-2xl font-bold text-white flex items-center gap-2"><span>📉</span> 실시간 페이지 조회수</h2>
-      </div>
-
-      <div className="w-full bg-slate-800 rounded-xl border border-slate-700 overflow-hidden flex justify-center p-2 h-[500px] mb-12">
-        <iframe width="100%" height="100%" src="https://datastudio.google.com/embed/reporting/1ffab37c-8dc8-4ab3-a2f1-2618111c55ca/page/ky30F" frameBorder={0} style={{ border: 0 }} allowFullScreen />
       </div>
 
       <div className="bg-slate-950 p-6 rounded-xl border border-red-500/30 shadow-lg">
